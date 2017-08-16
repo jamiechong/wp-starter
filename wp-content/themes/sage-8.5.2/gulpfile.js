@@ -10,7 +10,6 @@ var gulpif       = require('gulp-if');
 var imagemin     = require('gulp-imagemin');
 var jshint       = require('gulp-jshint');
 var lazypipe     = require('lazypipe');
-var less         = require('gulp-less');
 var merge        = require('merge-stream');
 var cssNano      = require('gulp-cssnano');
 var plumber      = require('gulp-plumber');
@@ -92,13 +91,10 @@ var cssTasks = function(filename) {
       return gulpif(enabled.maps, sourcemaps.init());
     })
     .pipe(function() {
-      return gulpif('*.less', less());
-    })
-    .pipe(function() {
       return gulpif('*.scss', sass({
         outputStyle: 'nested', // libsass doesn't support expanded yet
         precision: 10,
-        includePaths: ['.'],
+        includePaths: ['.', './bower_components/foundation-sites/scss/'],
         errLogToConsole: !enabled.failStyleTask
       }));
     })
@@ -223,10 +219,7 @@ gulp.task('images', function() {
     .pipe(imagemin([
       imagemin.jpegtran({progressive: true}),
       imagemin.gifsicle({interlaced: true}),
-      imagemin.svgo({plugins: [
-        {removeUnknownsAndDefaults: false},
-        {cleanupIDs: false}
-      ]})
+      imagemin.svgo({plugins: [{removeUnknownsAndDefaults: false}, {cleanupIDs: false}]})
     ]))
     .pipe(gulp.dest(path.dist + 'images'))
     .pipe(browserSync.stream());
@@ -254,9 +247,17 @@ gulp.task('clean', require('del').bind(null, [path.dist]));
 // build step for that asset and inject the changes into the page.
 // See: http://www.browsersync.io
 gulp.task('watch', function() {
+  var dev = {};
+  try {
+    dev = JSON.parse(require('fs').readFileSync('./dev.json'));
+  } catch(e) {
+    throw 'You need to create `dev.json`. See README.md for more info.';
+  }
+
   browserSync.init({
+    open: false,
     files: ['{lib,templates}/**/*.php', '*.php'],
-    proxy: config.devUrl,
+    proxy: dev.url,
     snippetOptions: {
       whitelist: ['/wp-admin/admin-ajax.php'],
       blacklist: ['/wp-admin/**']
@@ -280,7 +281,7 @@ gulp.task('build', function(callback) {
 });
 
 // ### Wiredep
-// `gulp wiredep` - Automatically inject Less and Sass Bower dependencies. See
+// `gulp wiredep` - Automatically inject Sass Bower dependencies. See
 // https://github.com/taptapship/wiredep
 gulp.task('wiredep', function() {
   var wiredep = require('wiredep').stream;
