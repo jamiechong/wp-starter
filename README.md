@@ -1,4 +1,4 @@
-# Modern Pet
+# WP Starter
 
 A starter repo for my Wordpress projects. Uses Sage 8.5 starter theme, with some changes.
 
