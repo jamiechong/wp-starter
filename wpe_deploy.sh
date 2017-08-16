@@ -38,15 +38,15 @@ function check_uncommited_files () {
 
 check_theme_exists
 check_remote_exists
-# check_uncommited_files
+check_uncommited_files
 
-# git checkout -b tmp-wpe-deploy
-# cd $themePath
-# sed -i '' '/dist/d' ./.gitignore
-# gulp --production
-# git add dist
-# git commit -am "deploy to wpengine"
-# git push --force $wpengineRemoteName tmp-wpe-deploy:master
-# git checkout master
-# git branch -D tmp-wpe-deploy
-# cd ../../../
+git checkout -b tmp-wpe-deploy
+cd $themePath
+sed -i '' '/dist/d' ./.gitignore
+gulp --production
+git add dist
+git commit -am "deploy to wpengine"
+git push --force $wpengineRemoteName tmp-wpe-deploy:master
+git checkout master
+git branch -D tmp-wpe-deploy
+cd ../../../
