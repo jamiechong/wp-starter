@@ -1,4 +1,3 @@
-<?php while (have_posts()) : the_post(); ?>
-  <?php get_template_part('templates/page', 'header'); ?>
-  <?php get_template_part('templates/content', 'page'); ?>
-<?php endwhile; ?>
+<?php the_post(); ?>
+<h1><?php the_title() ?></h1>
+<?php the_content(); ?>
