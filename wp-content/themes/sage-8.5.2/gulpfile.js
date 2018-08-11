@@ -94,17 +94,13 @@ var cssTasks = function(filename) {
       return gulpif('*.scss', sass({
         outputStyle: 'nested', // libsass doesn't support expanded yet
         precision: 10,
-        includePaths: ['.', './bower_components/foundation-sites/scss/'],
+        includePaths: ['.', './node_modules/foundation-sites/scss/'],
         errLogToConsole: !enabled.failStyleTask
       }));
     })
     .pipe(concat, filename)
     .pipe(autoprefixer, {
-      browsers: [
-        'last 2 versions',
-        'android 4',
-        'opera 12'
-      ]
+      browsers: ['last 2 versions', 'ie >= 9', 'android >= 4.4', 'ios >= 7']
     })
     .pipe(cssNano, {
       safe: true
@@ -229,7 +225,7 @@ gulp.task('images', function() {
 // `gulp jshint` - Lints configuration JSON and project JS.
 gulp.task('jshint', function() {
   return gulp.src([
-    'bower.json', 'gulpfile.js'
+    'gulpfile.js'
   ].concat(project.js))
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
@@ -267,7 +263,7 @@ gulp.task('watch', function() {
   gulp.watch([path.source + 'scripts/**/*'], ['jshint', 'scripts']);
   gulp.watch([path.source + 'fonts/**/*'], ['fonts']);
   gulp.watch([path.source + 'images/**/*'], ['images']);
-  gulp.watch(['bower.json', 'assets/manifest.json'], ['build']);
+  gulp.watch(['assets/manifest.json'], ['build']);
 });
 
 // ### Build
@@ -281,7 +277,7 @@ gulp.task('build', function(callback) {
 });
 
 // ### Wiredep
-// `gulp wiredep` - Automatically inject Sass Bower dependencies. See
+// `gulp wiredep` - Automatically inject Sass  dependencies. See
 // https://github.com/taptapship/wiredep
 gulp.task('wiredep', function() {
   var wiredep = require('wiredep').stream;
